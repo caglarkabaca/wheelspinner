@@ -9,7 +9,9 @@ export class WinnerScene extends Scene {
     }
 
     preload() {
-        this.load.image('logo', 'assets/icon.png')
+        this.load.baseURL = 'https://dummyimage.com/';
+        this.load.crossOrigin = 'anonymous';
+        this.load.image('logo', '600x200/000/fff')
     }
 
     create() {
@@ -17,7 +19,7 @@ export class WinnerScene extends Scene {
         const winner = this.registry.get('winner')
 
         const logoImage = this.add.image(200, 200, 'logo')
-        logoImage.setScale(0.2)
+        logoImage.setScale(0.6)
         const Ttext = this.add.text(200, 350, "KAZANDINIZ", {
             fontSize: '52px',
             color: TEXT_COLOR,
@@ -61,8 +63,13 @@ export class WinnerScene extends Scene {
         buttonGraphics.setInteractive(new Phaser.Geom.Rectangle(50, 600, 300, 50), Phaser.Geom.Rectangle.Contains);
 
         buttonGraphics.on('pointerdown', function () {
-            console.log('Button clicked!');
-            buttonText.setText('Clicked!');
+            buttonText.setText('Yönlendiriliyor!');
+            if (winner.customRedirectUrl != null) {
+                window.location.replace(winner.customRedirectUrl)
+            }
+            else {
+                window.location.replace(winner.redirectUrl)
+            }
         });
     }
 

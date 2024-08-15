@@ -9,7 +9,7 @@ const config = {
     width: 400,
     height: 866,
     parent: 'game-container',
-    backgroundColor: '#F5FEFD',
+    backgroundColor: '#080950',
     scene: [
         GameScene,
         WinnerScene
