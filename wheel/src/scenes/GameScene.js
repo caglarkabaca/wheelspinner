@@ -22,14 +22,16 @@ export class GameScene extends Scene {
         var url = "https://localhost:7031/CampaignCoupon/" + uniqueCode
         this.spinnable = false
         fetch(url)
-        .then((response) => response.json())
-        .then((json) => {
-            console.log(json)
-            json.forEach(data => {
-                this.datas.push(data)
-            });
-            this.spinnable = true
-        })
+            .then((response) => response.json())
+            .then((json) => {
+                console.log(json)
+                json.forEach(data => {
+                    this.datas.push(data)
+                });
+                this.spinnable = true
+                var h = 150 + 275;
+                this.createSpinWheel(h)
+            })
     }
 
     create() {
@@ -52,8 +54,6 @@ export class GameScene extends Scene {
         alttextbg.setOrigin(0.5, 0.5)
         alttextbg.depth = -1
 
-        var h = 150 + 275;
-        this.createSpinWheel(h)
         this.input.on("pointerdown", this.spin, this)
     }
 
