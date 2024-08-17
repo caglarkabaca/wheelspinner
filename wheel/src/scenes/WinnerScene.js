@@ -9,68 +9,76 @@ export class WinnerScene extends Scene {
     }
 
     preload() {
-        this.load.baseURL = 'https://dummyimage.com/';
-        this.load.crossOrigin = 'anonymous';
-        this.load.image('logo', '600x200/000/fff')
+        this.config = this.registry.get('config')
+
+        document.getElementById('game-container').style.backgroundColor = this.config.backgroundColor
+        document.body.style.backgroundColor = this.config.backgroundColor
+        // logo set
+        document.getElementById('logo').src = this.config.logoUrl
+        // startbuttontext
+        this.startButtonText = this.config.startButtonText
+        // endButtonText
+        this.endButtonText = this.config.endButtonText
+        // successText
+        this.successText = this.config.successText
     }
 
     create() {
-
         const winner = this.registry.get('winner')
 
-        const logoImage = this.add.image(200, 200, 'logo')
-        logoImage.setScale(0.6)
-        const Ttext = this.add.text(200, 350, "KAZANDINIZ", {
-            fontSize: '52px',
-            color: TEXT_COLOR,
-            fontFamily: 'Arial'
-        });
-        Ttext.setOrigin(0.5, 0.5);
-        const text = this.add.text(200, 400, winner.title, {
-            fontSize: '48px',
-            color: TEXT_COLOR,
-            fontFamily: 'Arial'
-        });
-        text.setOrigin(0.5, 0.5);
+        this.SuccessText(200, 50, this.successText
+            .replace('{title}', winner.title)
+            .replace('{code}', winner.code)
+            .replace('{description}', winner.description)
+            .split('\\n')
+        )
+        this.RoundedTextBox(200, 375, 50, this.endButtonText);
 
-        const codetext = this.add.text(200, 450, winner.code, {
-            fontSize: '52px',
-            color: TEXT2_COLOR,
-            fontFamily: 'Arial'
-        });
-        codetext.setOrigin(0.5, 0.5);
-
-        const alttext = this.add.text(200, 525, winner.description, {
-            fontSize: '18px',
-            color: TEXT_COLOR,
-            fontFamily: 'Arial',
-            wordWrap: { width: 300, useAdvancedWrap: true },
-            align: "center"
-        });
-        alttext.setOrigin(0.5, 0.5);
-
-        // Button
-        var buttonGraphics = this.add.graphics();
-        buttonGraphics.fillStyle(0x3c005a, 1);
-        buttonGraphics.fillRoundedRect(50, 600, 300, 50, 12);
-
-        // Create the button text
-        var buttonText = this.add.text(50 + 300 / 2, 600 + 50 / 2, 'Kuponu kullan', {
-            fontSize: '24px',
-            fill: '#ffffff'
-        });
-        buttonText.setOrigin(0.5, 0.5);
-        buttonGraphics.setInteractive(new Phaser.Geom.Rectangle(50, 600, 300, 50), Phaser.Geom.Rectangle.Contains);
-
-        buttonGraphics.on('pointerdown', function () {
-            buttonText.setText('Yönlendiriliyor!');
+        this.input.on("pointerdown", function () {
             if (winner.customRedirectUrl != null) {
                 window.location.replace(winner.customRedirectUrl)
             }
             else {
                 window.location.replace(winner.redirectUrl)
             }
-        });
+        }, this)
     }
 
+    RoundedTextBox(textX, textY, padding, endText) {
+        // End Button
+        var buttonText = this.add.text(textX, textY, endText, {
+            fontSize: '24px',
+            fill: '#ffffff',
+            align: "center",
+            wordWrap: { width: 300 }
+        });
+        buttonText.setOrigin(0.5, 0.5)
+        buttonText.setDepth(1)
+        const textBounds = buttonText.getBounds()
+    
+        // End Button BG
+        var buttonGraphics = this.add.graphics({
+            x: textBounds.x - (padding / 2),
+            y: textBounds.y - (padding / 2)
+        });
+        buttonGraphics.fillStyle(0x3c005a, 1);
+        buttonGraphics.fillRoundedRect(0, 0, textBounds.width + padding, textBounds.height + padding, 12);
+    }
+
+    SuccessText(x, y, successText) {
+        successText.forEach((text, index) => {
+            var fontSize = 64 - 16 * index;
+            if (fontSize < 24)
+                fontSize = 24
+            const infoText = this.add.text(x, y, text, {
+                fontSize: fontSize,
+                color: TEXT_COLOR,
+                fontFamily: 'Arial',
+                align: "center",
+                wordWrap: { width: 300 }
+            });
+            infoText.setOrigin(0.5, 0);
+            y += infoText.height + 5
+        });
+    }
 }

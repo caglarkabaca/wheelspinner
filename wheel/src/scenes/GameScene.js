@@ -10,50 +10,26 @@ export class GameScene extends Scene {
     }
 
     preload() {
-        this.load.baseURL = 'https://dummyimage.com/';
-        this.load.crossOrigin = 'anonymous';
-        this.load.image('logo', '600x200/000/fff')
+        this.datas = this.registry.get('datas')
+        this.config = this.registry.get('config')
 
-        this.datas = []
-        // api olayları
-        var uniqueCode = window.location.pathname.split('/')[1]
-        if (uniqueCode.length <= 0)
-            return
-        var url = "https://localhost:7031/CampaignCoupon/" + uniqueCode
-        this.spinnable = false
-        console.log(customObj.name);
-        fetch(url)
-            .then((response) => response.json())
-            .then((json) => {
-                console.log(json)
-                json.forEach(data => {
-                    this.datas.push(data)
-                });
-                this.spinnable = true
-                var h = 150 + 275;
-                this.createSpinWheel(h)
-            })
+        document.getElementById('game-container').style.backgroundColor = this.config.backgroundColor
+        document.body.style.backgroundColor = this.config.backgroundColor
+        // logo set
+        document.getElementById('logo').src = this.config.logoUrl
+        // startbuttontext
+        this.startButtonText = this.config.startButtonText
+        // endButtonText
+        this.endButtonText = this.config.endButtonText
+        // successText
+        this.successText = this.config.successText
+        
+        this.spinnable = true
     }
 
     create() {
-        const logoImage = this.add.image(200, 150, 'logo')
-        logoImage.setScale(0.6)
-
-        const alttext = this.add.text(200, 750, 'Çevirmek için tıklayın', {
-            fontSize: '28px',
-            color: "#ffffff",
-            fontFamily: 'Arial'
-        });
-        alttext.setOrigin(0.5, 0.5);
-        const bonsss = alttext.getBounds()
-
-        var graphics = this.make.graphics();
-        graphics.fillStyle(0x3c005a, 1);
-        graphics.fillRoundedRect(0, 0, bonsss.width + 50, bonsss.height + 50);
-        graphics.generateTexture("asdas", bonsss.width + 50, bonsss.height + 50);
-        const alttextbg = this.add.sprite(bonsss.centerX, bonsss.centerY, "asdas")
-        alttextbg.setOrigin(0.5, 0.5)
-        alttextbg.depth = -1
+        this.RoundedTextBox(200, 500, 50)
+        this.SpinWheel(200)
 
         this.input.on("pointerdown", this.spin, this)
     }
@@ -92,31 +68,27 @@ export class GameScene extends Scene {
         });
     }
 
-    createSpinWheel(h) {
-        // bg
-        {
-            var graphics = this.make.graphics({
-                x: 0,
-                y: 0,
-                add: false
-            });
-            graphics.fillStyle(0xFFBFFF, 1);
-            graphics.fillCircle(180, 180, 180);
-            graphics.generateTexture("wheelbg", 180 * 2, 180 * 2);
-            const bg = this.add.sprite(200, h, "wheelbg")
-            var graphics = this.make.graphics({
-                x: 0,
-                y: 0,
-                add: false
-            });
-            graphics.fillStyle(TEXT_COLOR, 1);
-            graphics.fillTriangle(170, 0, 190, 0, 180, 15)
-            graphics.generateTexture("wheelbgTriangle", 180 * 2, 180 * 2);
-            const bgTriangle = this.add.sprite(200, h, "wheelbgTriangle")
-            bgTriangle.depth = 1
-        }
+    SpinWheel(h) {
 
-        // wheel
+        var graphics = this.make.graphics({
+            x: 0,
+            y: 0,
+            add: false
+        });
+        graphics.fillStyle(0xFFBFFF, 1);
+        graphics.fillCircle(180, 180, 180);
+        graphics.generateTexture("wheelbg", 180 * 2, 180 * 2);
+        const bg = this.add.sprite(200, h, "wheelbg")
+        var graphics = this.make.graphics({
+            x: 0,
+            y: 0,
+            add: false
+        });
+        graphics.fillStyle(TEXT_COLOR, 1);
+        graphics.fillTriangle(170, 0, 190, 0, 180, 15)
+        graphics.generateTexture("wheelbgTriangle", 180 * 2, 180 * 2);
+        const bgTriangle = this.add.sprite(200, h, "wheelbgTriangle")
+        bgTriangle.depth = 1
 
         const parts = []
         const angle = 360 / this.datas.length;
@@ -153,5 +125,22 @@ export class GameScene extends Scene {
             parts.push(this.add.container(0, 0, [_part, text]))
         }
         this.wheel = this.add.container(200, h, parts);
+    }
+
+    RoundedTextBox(x, y, padding) {
+        const alttext = this.add.text(x, y, this.startButtonText, {
+            fontSize: '28px',
+            color: "#ffffff",
+            fontFamily: 'Arial'
+        });
+        alttext.setOrigin(0.5, 0.5);
+        const bonsss = alttext.getBounds()
+        var graphics = this.make.graphics();
+        graphics.fillStyle(0x3c005a, 1);
+        graphics.fillRoundedRect(0, 0, bonsss.width + padding, bonsss.height + padding);
+        graphics.generateTexture("asdas", bonsss.width + padding, bonsss.height + padding);
+        const alttextbg = this.add.sprite(bonsss.centerX, bonsss.centerY, "asdas")
+        alttextbg.setOrigin(0.5, 0.5)
+        alttextbg.depth = -1
     }
 }
