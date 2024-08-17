@@ -21,6 +21,7 @@ export class GameScene extends Scene {
             return
         var url = "https://localhost:7031/CampaignCoupon/" + uniqueCode
         this.spinnable = false
+        console.log(customObj.name);
         fetch(url)
             .then((response) => response.json())
             .then((json) => {
