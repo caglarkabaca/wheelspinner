@@ -1,9 +1,8 @@
-import { Scene } from 'phaser';
 const colors = [0xEABFFF, 0xD580FF];
 const TEXT_COLOR = '#3c005a';
 
 
-export class GameScene extends Scene {
+class GameScene extends Phaser.Scene {
 
     constructor() {
         super("GameScene");
@@ -25,10 +24,12 @@ export class GameScene extends Scene {
         this.successText = this.config.successText
         
         this.spinnable = true
+
+        this.load.image('red', 'public/assets/star3.png');
     }
 
     create() {
-        this.RoundedTextBox(200, 500, 50)
+        this.RoundedTextBox(200, 450, 50)
         this.SpinWheel(200)
 
         this.input.on("pointerdown", this.spin, this)
@@ -37,6 +38,15 @@ export class GameScene extends Scene {
     spin() {
         if (!this.spinnable)
             return;
+
+        this.input.off("pointerdown", this.spin, this)
+
+        const particles = this.add.particles(200, 20, 'red', {
+            speed: 100,
+            scale: { start: 1, end: 0 },
+            blendMode: 'ADD'
+        });
+        particles.depth = 10
 
         this.spinnable = false
         const angle = 360 / this.datas.length;
@@ -52,15 +62,16 @@ export class GameScene extends Scene {
             callbackScope: this,
 
             onComplete: function (_) {
+
+                particles.stop()
                 const winner = this.datas[prize]
-                this.registry.set('winner', winner)
                 this.spinnable = true
 
                 this.time.addEvent({
                     delay: 1000,
                     loop: false,
                     callback: () => {
-                        this.scene.start("WinnerScene");
+                        this.ShowResult(winner)
                     }
                 })
 
@@ -142,5 +153,73 @@ export class GameScene extends Scene {
         const alttextbg = this.add.sprite(bonsss.centerX, bonsss.centerY, "asdas")
         alttextbg.setOrigin(0.5, 0.5)
         alttextbg.depth = -1
+    }
+
+    ShowResult(winner) {
+
+        this.ResultBg(50, 50 + 75, 300, 375, 40)
+        this.SuccessText(200, 50 + 75, this.successText
+            .replace('{title}', winner.title)
+            .replace('{code}', winner.code)
+            .replace('{description}', winner.description)
+            .split('\\n')
+        )
+        this.TextBox(200, 375 + 75, 50, this.endButtonText);
+
+        this.input.on("pointerdown", function () {
+            if (winner.customRedirectUrl != null) {
+                window.location.replace(winner.customRedirectUrl)
+            }
+            else {
+                window.location.replace(winner.redirectUrl)
+            }
+        }, this)
+    }
+
+    ResultBg(x, y, w, h, padding) {
+        var graphics = this.add.graphics({
+            x: x - (padding / 2),
+            y: y - (padding / 2)
+        });
+        graphics.fillStyle(0x8B005D, 1);
+        graphics.fillRoundedRect(0, 0, w + padding, h + padding, 12);
+    }
+
+    TextBox(textX, textY, padding, endText) {
+        // End Button
+        var buttonText = this.add.text(textX, textY, endText, {
+            fontSize: '24px',
+            fill: '#ffffff',
+            align: "center",
+            wordWrap: { width: 250 }
+        });
+        buttonText.setOrigin(0.5, 0.5)
+        buttonText.setDepth(1)
+        const textBounds = buttonText.getBounds()
+    
+        // End Button BG
+        var buttonGraphics = this.add.graphics({
+            x: textBounds.x - (padding / 2),
+            y: textBounds.y - (padding / 2)
+        });
+        buttonGraphics.fillStyle(0x3c005a, 1);
+        buttonGraphics.fillRoundedRect(0, 0, textBounds.width + padding, textBounds.height + padding, 12);
+    }
+
+     SuccessText(x, y, successText) {
+        successText.forEach((text, index) => {
+            var fontSize = 64 - 16 * index;
+            if (fontSize < 24)
+                fontSize = 24
+            const infoText = this.add.text(x, y, text, {
+                fontSize: fontSize,
+                color: "#ffffff",
+                fontFamily: 'Arial',
+                align: "center",
+                wordWrap: { width: 300 }
+            });
+            infoText.setOrigin(0.5, 0);
+            y += infoText.height + 5
+        });
     }
 }

@@ -5,16 +5,42 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="public/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
+
     <title>LinkShortener</title>
 </head>
 
 <body>
     <div id="app" style="flex-direction: column;">
-        <img src="https://winfluencer.app/wp-content/uploads/w-logo.png" id="logo">
+        <img src="" id="logo" width="350">
         <div id="game-container"></div>
     </div>
-    <script type="module" src="src/main.js"></script>
+    <!-- <script type="module" src="src/main.js"></script> -->
+    <script src="./src/scenes/PreloadScene.js"></script>
+    <script src="./src/scenes/GameScene.js"></script>
+    <script src="./src/scenes/WinnerScene.js"></script>
+    <script>
+        const config = {
+            type: Phaser.AUTO,
+            width: 400,
+            height: 600,
+            parent: 'game-container',
+            transparent: true,
+            scene: [
+                PreloadScene,
+                GameScene,
+                WinnerScene
+            ]
+        };
+        const game = new Phaser.Game(config);
+    </script>
 </body>
-
 </html>
+
+<!--
+
+winner popup olarak çıksın
+wwwroot /game
+
+-->

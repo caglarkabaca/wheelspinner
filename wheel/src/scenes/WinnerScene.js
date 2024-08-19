@@ -1,8 +1,6 @@
-import { Scene } from 'phaser';
-const TEXT_COLOR = '#3c005a';
 const TEXT2_COLOR = '#EABFFF';
 
-export class WinnerScene extends Scene {
+class WinnerScene extends Phaser.Scene {
 
     constructor() {
         super("WinnerScene");
@@ -32,7 +30,7 @@ export class WinnerScene extends Scene {
             .replace('{description}', winner.description)
             .split('\\n')
         )
-        this.RoundedTextBox(200, 375, 50, this.endButtonText);
+        this.TextBox(200, 375, 50, this.endButtonText);
 
         this.input.on("pointerdown", function () {
             if (winner.customRedirectUrl != null) {
@@ -44,13 +42,13 @@ export class WinnerScene extends Scene {
         }, this)
     }
 
-    RoundedTextBox(textX, textY, padding, endText) {
+    TextBox(textX, textY, padding, endText) {
         // End Button
         var buttonText = this.add.text(textX, textY, endText, {
             fontSize: '24px',
             fill: '#ffffff',
             align: "center",
-            wordWrap: { width: 300 }
+            wordWrap: { width: 250 }
         });
         buttonText.setOrigin(0.5, 0.5)
         buttonText.setDepth(1)

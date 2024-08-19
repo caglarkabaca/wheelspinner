@@ -1,6 +1,4 @@
-import { Scene } from 'phaser';
-
-export class PreloadScene extends Scene {
+class PreloadScene extends Phaser.Scene {
     constructor() {
         super("PreloadScene")
     }
@@ -10,7 +8,9 @@ export class PreloadScene extends Scene {
     }
 
     create() {
-        var uniqueCode = window.location.pathname.split('/')[1]
+
+        const searchParams = new URLSearchParams(window.location.search);
+        var uniqueCode = searchParams.get('code')
         if (uniqueCode.length <= 0)
             return
         var url = "https://localhost:7031/CampaignCoupon/" + uniqueCode
@@ -24,7 +24,7 @@ export class PreloadScene extends Scene {
                     datas.push(data)
                 });
                 this.registry.set('datas', datas)
-                
+
                 if (json.setting == null) {
                     json.setting = {
                         logoUrl: "https://winfluencer.app/wp-content/uploads/w-logo.png",
