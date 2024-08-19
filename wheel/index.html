@@ -12,9 +12,13 @@
 </head>
 
 <body>
-    <div id="app" style="flex-direction: column;">
-        <img src="" id="logo" width="350">
-        <div id="game-container"></div>
+    <div id="app">
+        <div id="loader" class="loader"></div>
+        <div id="mainApp" style="flex-direction: column; display: none;">
+            <img src="" id="logo" width="350">
+            <div id="game-container">
+            </div>
+        </div>
     </div>
     <!-- <script type="module" src="src/main.js"></script> -->
     <script src="./src/scenes/PreloadScene.js"></script>
@@ -36,6 +40,7 @@
         const game = new Phaser.Game(config);
     </script>
 </body>
+
 </html>
 
 <!--

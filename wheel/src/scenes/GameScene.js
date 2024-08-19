@@ -22,7 +22,7 @@ class GameScene extends Phaser.Scene {
         this.endButtonText = this.config.endButtonText
         // successText
         this.successText = this.config.successText
-        
+
         this.spinnable = true
 
         this.load.image('red', 'public/assets/star3.png');
@@ -181,7 +181,7 @@ class GameScene extends Phaser.Scene {
             x: x - (padding / 2),
             y: y - (padding / 2)
         });
-        graphics.fillStyle(0x8B005D, 1);
+        graphics.fillStyle(0xFFBFFF, 1);
         graphics.fillRoundedRect(0, 0, w + padding, h + padding, 12);
     }
 
@@ -196,7 +196,7 @@ class GameScene extends Phaser.Scene {
         buttonText.setOrigin(0.5, 0.5)
         buttonText.setDepth(1)
         const textBounds = buttonText.getBounds()
-    
+
         // End Button BG
         var buttonGraphics = this.add.graphics({
             x: textBounds.x - (padding / 2),
@@ -206,14 +206,15 @@ class GameScene extends Phaser.Scene {
         buttonGraphics.fillRoundedRect(0, 0, textBounds.width + padding, textBounds.height + padding, 12);
     }
 
-     SuccessText(x, y, successText) {
+    SuccessText(x, y, successText) {
         successText.forEach((text, index) => {
             var fontSize = 64 - 16 * index;
             if (fontSize < 24)
                 fontSize = 24
             const infoText = this.add.text(x, y, text, {
                 fontSize: fontSize,
-                color: "#ffffff",
+                color: TEXT_COLOR,
+                strokeThickness: 5,
                 fontFamily: 'Arial',
                 align: "center",
                 wordWrap: { width: 300 }

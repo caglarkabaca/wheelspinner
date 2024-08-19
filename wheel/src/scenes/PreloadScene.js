@@ -18,7 +18,6 @@ class PreloadScene extends Phaser.Scene {
         fetch(url)
             .then((response) => response.json())
             .then((json) => {
-
                 var datas = []
                 json.coupons.forEach(data => {
                     datas.push(data)
@@ -35,6 +34,10 @@ class PreloadScene extends Phaser.Scene {
                     }
                 }
                 this.registry.set('config', json.setting)
+
+                document.getElementById("loader").remove()
+                document.getElementById("mainApp").style.display = "block"
+
                 this.scene.start("GameScene");
             })
     }
