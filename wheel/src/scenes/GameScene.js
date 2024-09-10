@@ -1,107 +1,164 @@
-const colors = [0xEABFFF, 0xD580FF];
-const TEXT_COLOR = '#3c005a';
+// const colors = [0xEABFFF, 0xD580FF];
+const colors = [0x4724a1, 0xb387e8, 0x6b1cd5, 0x4d2379];
 
+// #4724A1
+// #B387E8
+// #6B1CD5
+// #4D2379
+
+const TEXT_COLOR = "#3c005a";
 
 class GameScene extends Phaser.Scene {
-
     constructor() {
         super("GameScene");
     }
 
     preload() {
-        this.datas = this.registry.get('datas')
-        this.config = this.registry.get('config')
+        this.datas = this.registry.get("datas");
+        this.config = this.registry.get("config");
 
-        document.getElementById('game-container').style.backgroundColor = this.config.backgroundColor
-        document.body.style.backgroundColor = this.config.backgroundColor
+        // document.getElementById('game-container').style.backgroundColor = this.config.backgroundColor
+        document.body.style.backgroundColor = this.config.backgroundColor;
         // logo set
-        document.getElementById('logo').src = this.config.logoUrl
+        document.getElementById("logo").src = this.config.logoUrl;
         // startbuttontext
-        this.startButtonText = this.config.startButtonText
+        this.startButtonText = this.config.startButtonText;
         // endButtonText
-        this.endButtonText = this.config.endButtonText
+        this.endButtonText = this.config.endButtonText;
         // successText
-        this.successText = this.config.successText
-        
-        this.spinnable = true
+        this.successText = this.config.successText;
 
-        this.load.image('red', 'public/assets/star3.png');
+        this.spinnable = true;
+
+        this.load.image("red", "public/assets/star3.png");
     }
 
     create() {
-        this.RoundedTextBox(200, 450, 50)
-        this.SpinWheel(200)
+        let { width, height } = this.sys.game.canvas;
+        this.ratio = width / 400;
 
-        this.input.on("pointerdown", this.spin, this)
+        this.RoundedTextBox(
+            200 * this.ratio,
+            475 * this.ratio,
+            50 * this.ratio
+        );
+        this.SpinWheel(225 * this.ratio);
     }
 
     spin() {
-        if (!this.spinnable)
-            return;
+        if (!this.spinnable) return;
 
-        this.input.off("pointerdown", this.spin, this)
+        this.input.off("pointerdown", this.spin, this);
 
-        const particles = this.add.particles(200, 20, 'red', {
-            speed: 100,
-            scale: { start: 1, end: 0 },
-            blendMode: 'ADD'
-        });
-        particles.depth = 10
+        const particles = this.add.particles(
+            200 * this.ratio,
+            33.5 * this.ratio,
+            "red",
+            {
+                speed: 100,
+                scale: { start: 1, end: 0 },
+                blendMode: "ADD",
+            }
+        );
+        particles.depth = 10;
 
-        this.spinnable = false
+        this.spinnable = false;
         const angle = 360 / this.datas.length;
         var rounds = Phaser.Math.Between(2, 4);
         var prize = Phaser.Math.Between(0, this.datas.length - 1);
+        var spinAngle = 90 + angle / 2 + angle * prize;
 
         this.tweens.add({
-
-            targets: [this.wheel],
-            angle: 360 * rounds + (240 - prize * angle) % 360,
-            duration: 2000,
+            targets: [this.wheel, this.wheeldots],
+            angle: -(360 * rounds + spinAngle),
+            duration: 3500,
             ease: "Cubic.easeOut",
             callbackScope: this,
 
             onComplete: function (_) {
-
-                particles.stop()
-                const winner = this.datas[prize]
-                this.spinnable = true
+                particles.stop();
+                const winner = this.datas[prize];
+                this.spinnable = true;
 
                 this.time.addEvent({
                     delay: 1000,
                     loop: false,
                     callback: () => {
-                        this.ShowResult(winner)
-                    }
-                })
-
-            }
+                        this.ShowResult(winner);
+                    },
+                });
+            },
         });
     }
 
     SpinWheel(h) {
-
+        // BG
         var graphics = this.make.graphics({
             x: 0,
             y: 0,
-            add: false
+            add: false,
         });
-        graphics.fillStyle(0xFFBFFF, 1);
-        graphics.fillCircle(180, 180, 180);
-        graphics.generateTexture("wheelbg", 180 * 2, 180 * 2);
-        const bg = this.add.sprite(200, h, "wheelbg")
+        graphics.fillStyle(0xffffff, 1);
+        graphics.fillCircle(
+            182 * this.ratio,
+            182 * this.ratio,
+            182 * this.ratio
+        );
+        graphics.generateTexture(
+            "wheelbg",
+            182 * 2 * this.ratio,
+            182 * 2 * this.ratio
+        );
+        const bg = this.add.sprite(200 * this.ratio, h, "wheelbg");
+        bg.depth = -2;
+
+        // UCGEN
         var graphics = this.make.graphics({
             x: 0,
             y: 0,
-            add: false
+            add: false,
         });
-        graphics.fillStyle(TEXT_COLOR, 1);
-        graphics.fillTriangle(170, 0, 190, 0, 180, 15)
-        graphics.generateTexture("wheelbgTriangle", 180 * 2, 180 * 2);
-        const bgTriangle = this.add.sprite(200, h, "wheelbgTriangle")
-        bgTriangle.depth = 1
+        graphics.fillStyle(0xffffff, 1);
+        graphics.fillTriangle(
+            165 * this.ratio,
+            0,
+            195 * this.ratio,
+            0,
+            180 * this.ratio,
+            40 * this.ratio
+        );
+        graphics.generateTexture(
+            "wheelbgTriangle",
+            180 * 2 * this.ratio,
+            180 * 2 * this.ratio
+        );
+        const bgTriangle = this.add.sprite(
+            200 * this.ratio,
+            h - 20 * this.ratio,
+            "wheelbgTriangle"
+        );
+        bgTriangle.depth = 1;
 
-        const parts = []
+        // NOKTA
+        var graphics = this.make.graphics({
+            x: 0,
+            y: 0,
+            add: false,
+        });
+        graphics.fillStyle(0xffffff, 1);
+        graphics.fillCircle(
+            180 * this.ratio,
+            180 * this.ratio,
+            25 * this.ratio
+        );
+        graphics.generateTexture(
+            "wheelbgPoint",
+            180 * 2 * this.ratio,
+            180 * 2 * this.ratio
+        );
+        const bgPoint = this.add.sprite(200 * this.ratio, h, "wheelbgPoint");
+
+        const parts = [];
         const angle = 360 / this.datas.length;
 
         // looping through each slice
@@ -110,116 +167,229 @@ class GameScene extends Phaser.Scene {
             var graphics = this.make.graphics({
                 x: 0,
                 y: 0,
-                add: false
+                add: false,
             });
             // setting graphics fill style
-            graphics.fillStyle(colors[i % 2], 1);
+            graphics.fillStyle(colors[i % 4], 1);
             // drawing the slice
-            graphics.slice(175, 175, 175, Phaser.Math.DegToRad(i * angle), Phaser.Math.DegToRad((i + 1) * angle), false);
+            graphics.slice(
+                175 * this.ratio,
+                175 * this.ratio,
+                175 * this.ratio,
+                Phaser.Math.DegToRad(i * angle),
+                Phaser.Math.DegToRad((i + 1) * angle),
+                false
+            );
             // filling the slice
             graphics.fillPath();
-            graphics.generateTexture("label" + i, 175 * 2, 175 * 2);
-            const _part = this.add.sprite(0, 0, "label" + i)
-            _part.setOrigin(0.5, 0.5)
-            _part.depth = -1
+
+            graphics.generateTexture(
+                "label" + i,
+                175 * 2 * this.ratio,
+                175 * 2 * this.ratio
+            );
+            const _part = this.add.sprite(0, 0, "label" + i);
+            _part.setOrigin(0.5, 0.5);
+            _part.depth = -1;
 
             const radianAngle = Phaser.Math.DegToRad(angle * i + angle / 2);
 
-            const text = this.add.text(175 * 0.5 * Math.cos(radianAngle), 175 * 0.5 * Math.sin(radianAngle), this.datas[i].title, {
-                fontSize: '22px',
-                color: TEXT_COLOR,
-                fontFamily: 'Arial',
-                strokeThickness: 5
-            });
-            text.setOrigin(0.5, 0.5)
-            text.angle = angle * i + angle / 2
-            parts.push(this.add.container(0, 0, [_part, text]))
+            const text = this.add.text(
+                175 * 0.95 * Math.cos(radianAngle) * this.ratio,
+                175 * 0.95 * Math.sin(radianAngle) * this.ratio,
+                this.datas[i].title,
+                {
+                    fontSize: 56,
+                    color: "#fff",
+                    fontFamily: "Montserrat",
+                    resolution: 2,
+                }
+            );
+            text.initRTL();
+            text.setOrigin(1, 0.5);
+            text.angle = angle * i + angle / 2;
+            parts.push(this.add.container(0, 0, [_part, text]));
         }
-        this.wheel = this.add.container(200, h, parts);
+        this.wheel = this.add.container(200 * this.ratio, h, parts);
+        this.wheel.depth = -2;
+
+        // çember üzerindeki noktalar
+        var graphics = this.make.graphics({
+            x: 0,
+            y: 0,
+        });
+        graphics.fillStyle(0xffffff, 1);
+        for (var i = 0; i < this.datas.length; i++) {
+            graphics.fillCircle(
+                (175 + Math.cos((angle * i * Math.PI) / 180) * 175) *
+                    this.ratio,
+                (175 + Math.sin((angle * i * Math.PI) / 180) * 175) *
+                    this.ratio,
+                7 * this.ratio
+            );
+        }
+        graphics.generateTexture(
+            "dot" + i,
+            175 * 2 * this.ratio,
+            175 * 2 * this.ratio
+        );
+        this.wheeldots = this.add.sprite(200 * this.ratio, h, "dot" + i);
+
+        this.wheel.angle = angle / 3;
+        this.wheeldots.angle = angle / 3;
     }
 
     RoundedTextBox(x, y, padding) {
         const alttext = this.add.text(x, y, this.startButtonText, {
-            fontSize: '28px',
+            fontSize: "72px",
             color: "#ffffff",
-            fontFamily: 'Arial'
+            fontFamily: "Montserrat",
+            resolution: 2,
         });
         alttext.setOrigin(0.5, 0.5);
-        const bonsss = alttext.getBounds()
+        const bonsss = alttext.getBounds();
         var graphics = this.make.graphics();
         graphics.fillStyle(0x3c005a, 1);
-        graphics.fillRoundedRect(0, 0, bonsss.width + padding, bonsss.height + padding);
-        graphics.generateTexture("asdas", bonsss.width + padding, bonsss.height + padding);
-        const alttextbg = this.add.sprite(bonsss.centerX, bonsss.centerY, "asdas")
-        alttextbg.setOrigin(0.5, 0.5)
-        alttextbg.depth = -1
+        graphics.fillRoundedRect(
+            0,
+            0,
+            bonsss.width + padding,
+            bonsss.height + padding
+        );
+        graphics.generateTexture(
+            "asdas",
+            bonsss.width + padding,
+            bonsss.height + padding
+        );
+        const alttextbg = this.add.sprite(
+            bonsss.centerX,
+            bonsss.centerY,
+            "asdas"
+        );
+        alttextbg.setOrigin(0.5, 0.5);
+        alttextbg.depth = -1;
+        alttextbg.setInteractive();
+        alttextbg.on("pointerdown", () => this.spin());
     }
 
     ShowResult(winner) {
-
-        this.ResultBg(50, 50 + 75, 300, 375, 40)
-        this.SuccessText(200, 50 + 75, this.successText
-            .replace('{title}', winner.title)
-            .replace('{code}', winner.code)
-            .replace('{description}', winner.description)
-            .split('\\n')
-        )
-        this.TextBox(200, 375 + 75, 50, this.endButtonText);
-
-        this.input.on("pointerdown", function () {
-            if (winner.customRedirectUrl != null) {
-                window.location.replace(winner.customRedirectUrl)
+        this.ResultBg(
+            50 * this.ratio,
+            (50 + 75) * this.ratio,
+            300 * this.ratio,
+            250 * this.ratio,
+            45 * this.ratio
+        );
+        this.SuccessText(
+            200 * this.ratio,
+            (50 + 75) * this.ratio,
+            this.successText
+                .replace("{title}", winner.title)
+                .replace("{code}", winner.code)
+                .replace("{description}", winner.description)
+                .split("\\n"),
+            winner.code
+        );
+        this.TextBox(
+            200 * this.ratio,
+            (250 + 75) * this.ratio,
+            50 * this.ratio,
+            this.endButtonText,
+            () => {
+                if (winner.customRedirectUrl != null) {
+                    window.location.replace(winner.customRedirectUrl);
+                } else {
+                    window.location.replace(winner.redirectUrl);
+                }
             }
-            else {
-                window.location.replace(winner.redirectUrl)
-            }
-        }, this)
+        );
     }
 
     ResultBg(x, y, w, h, padding) {
+        // var graphics = this.add.graphics({
+        //     x: x - (padding / 2),
+        //     y: y - (padding / 2)
+        // });
+        // graphics.fillStyle(0xffffff, 0.7);
+        // graphics.fillRoundedRect(0, 0, w + padding, h + padding, 10);
         var graphics = this.add.graphics({
-            x: x - (padding / 2),
-            y: y - (padding / 2)
+            x: x - (padding - 5) / 2,
+            y: y - (padding - 5) / 2,
         });
-        graphics.fillStyle(0x8B005D, 1);
-        graphics.fillRoundedRect(0, 0, w + padding, h + padding, 12);
+        graphics.fillStyle(0x000000, 0.9);
+        graphics.fillRoundedRect(
+            0,
+            0,
+            w + padding - 5,
+            h + padding - 5,
+            10 * this.ratio
+        );
     }
 
-    TextBox(textX, textY, padding, endText) {
+    TextBox(textX, textY, padding, endText, onClick) {
         // End Button
         var buttonText = this.add.text(textX, textY, endText, {
-            fontSize: '24px',
-            fill: '#ffffff',
+            fontSize: "72px",
+            fill: "#ffffff",
             align: "center",
-            wordWrap: { width: 250 }
+            fontFamily: "Montserrat",
+            resolution: 2,
+            wordWrap: { width: 250 * this.ratio },
         });
-        buttonText.setOrigin(0.5, 0.5)
-        buttonText.setDepth(1)
-        const textBounds = buttonText.getBounds()
-    
+        buttonText.setOrigin(0.5, 0.5);
+        buttonText.setDepth(1);
+        const textBounds = buttonText.getBounds();
+
         // End Button BG
         var buttonGraphics = this.add.graphics({
-            x: textBounds.x - (padding / 2),
-            y: textBounds.y - (padding / 2)
+            x: textBounds.x - padding / 2,
+            y: textBounds.y - padding / 2,
         });
         buttonGraphics.fillStyle(0x3c005a, 1);
-        buttonGraphics.fillRoundedRect(0, 0, textBounds.width + padding, textBounds.height + padding, 12);
+        buttonGraphics.fillRoundedRect(
+            0,
+            0,
+            textBounds.width + padding,
+            textBounds.height + padding,
+            12 * this.ratio
+        );
+
+        buttonGraphics.setInteractive(
+            new Phaser.Geom.Rectangle(
+                0,
+                0,
+                textBounds.width + padding,
+                textBounds.height + padding
+            ),
+            Phaser.Geom.Rectangle.Contains
+        );
+        buttonGraphics.on("pointerdown", onClick);
     }
 
-     SuccessText(x, y, successText) {
+    SuccessText(x, y, successText, code) {
+        var width = 0;
+        const infoText = this.add.text(x, y, code, {
+            fontSize: 88,
+            color: "#fff",
+            fontFamily: "Montserrat",
+            align: "center",
+            wordWrap: { width: 285 * this.ratio },
+            resolution: 2,
+        });
+        infoText.depth = 3;
+        infoText.setOrigin(0.5, 0);
         successText.forEach((text, index) => {
-            var fontSize = 64 - 16 * index;
-            if (fontSize < 24)
-                fontSize = 24
-            const infoText = this.add.text(x, y, text, {
-                fontSize: fontSize,
-                color: "#ffffff",
-                fontFamily: 'Arial',
+            const infoText = this.add.text(x, y + 50 * this.ratio, text, {
+                fontSize: 48,
+                color: "#fff",
+                fontFamily: "Montserrat",
                 align: "center",
-                wordWrap: { width: 300 }
+                wordWrap: { width: 285 * this.ratio },
+                resolution: 2,
             });
+            infoText.depth = 3;
             infoText.setOrigin(0.5, 0);
-            y += infoText.height + 5
+            y += infoText.height + 5;
         });
     }
 }
