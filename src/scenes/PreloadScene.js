@@ -58,32 +58,43 @@ class PreloadScene extends Phaser.Scene {
         //     customcustomRedirectUrl: null
         // }
 
-        var datas = [
-            {
-                title: "TEST1",
-                code: "CODE1",
-                description: "DESC1",
-                redirectUrl: "https://github.com",
-            },
-            {
-                title: "TEST2",
-                code: "CODE2",
-                description: "DESC2",
-                redirectUrl: "https://github.com",
-            },
-            {
-                title: "TEST3",
-                code: "CODE3",
-                description: "DESC3",
-                redirectUrl: "https://github.com",
-            },
-            {
-                title: "TEST4",
-                code: "CODE4",
-                description: "DESC4",
-                redirectUrl: "https://github.com",
-            },
-        ];
+        // var datas = [
+        //     {
+        //         title: "TEST1",
+        //         code: "CODE1",
+        //         description: "DESC1",
+        //         redirectUrl: "https://github.com",
+        //     },
+        //     {
+        //         title: "TEST2",
+        //         code: "CODE2",
+        //         description: "DESC2",
+        //         redirectUrl: "https://github.com",
+        //     },
+        //     {
+        //         title: "TEST3",
+        //         code: "CODE3",
+        //         description: "DESC3",
+        //         redirectUrl: "https://github.com",
+        //     },
+        //     {
+        //         title: "TEST4",
+        //         code: "CODE4",
+        //         description: "DESC4",
+        //         redirectUrl: "https://github.com",
+        //     },
+        // ];
+
+        const searchParams = new URLSearchParams(window.location.search);
+        var data = searchParams.get("data");
+
+        if (data == null) {
+            console.log("no data recieved");
+            return;
+        }
+
+        var datas = JSON.parse(atob(data));
+
         this.registry.set("datas", datas);
         this.registry.set("config", {
             logoUrl: "https://winfluencer.app/wp-content/uploads/w-logo.png",
